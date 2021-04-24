@@ -5,4 +5,5 @@ public class Constants {
   public static final int WINDOW_HEIGHT = 800;
   public static final int WORLD_UNIT = 16;
   public static final float PLAYER_WALK_SPEED = 50f;
+  public static final float CITIZEN_WALK_SPEED = 0.3f;
 }

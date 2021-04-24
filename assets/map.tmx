@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="500" height="500" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="24">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="500" height="500" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="29">
  <tileset firstgid="1" source="spritesheet.tsx"/>
  <layer id="1" name="Sidewalk" width="500" height="500">
   <data encoding="csv">
@@ -1018,9 +1018,14 @@
   <object id="10" name="Player" x="4278" y="3997.5" width="31" height="28"/>
  </objectgroup>
  <objectgroup id="4" name="CitizenWarpPoints">
-  <object id="12" x="4364.33" y="3937.17" width="21.5" height="20"/>
+  <object id="12" name="Citizen 1" x="4364.33" y="3937.17" width="21.5" height="20"/>
+  <object id="27" name="Citizen 2" x="4093.33" y="3850.67" width="18.6667" height="17.3333"/>
+  <object id="28" name="Citizen 3" x="4577.33" y="3740" width="17.3333" height="24"/>
  </objectgroup>
  <objectgroup id="6" name="CitizenWanderPoints">
   <object id="23" x="4114.67" y="3820" width="21.3333" height="18.6667"/>
+  <object id="24" x="4214.67" y="3814.67" width="17.3333" height="17.3333"/>
+  <object id="25" x="4220" y="4004" width="20" height="21.3333"/>
+  <object id="26" x="4388" y="3818.67" width="22.6667" height="20"/>
  </objectgroup>
 </map>

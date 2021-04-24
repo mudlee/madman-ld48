@@ -29,7 +29,7 @@ public class CitizenCreator {
 
     for(var i=0;i<citizenWarpPoints.getCount();i++) {
       final var warpPoint = citizenWarpPoints.get(i);
-      final var citizen = new Citizen(sprite, wanderPoints, pathfinder);
+      final var citizen = new Citizen(i, sprite, wanderPoints, pathfinder);
       citizen.setPosition(
         warpPoint.getProperties().get("x", Float.class),
         warpPoint.getProperties().get("y", Float.class)

@@ -8,8 +8,12 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 public class PathFinder {
   private final IndexedAStarPathFinder<TestNode> pathFinder;
   private final TestNode[][] nodes;
+  private final int mapWidth;
+  private final int mapHeight;
 
   public PathFinder(int mapWidth, int mapHeight, TiledMapTileLayer walkableLayer) {
+    this.mapWidth = mapWidth;
+    this.mapHeight = mapHeight;
     final var builder = new GraphBuilder(mapWidth, mapHeight, walkableLayer);
     builder.build();
 
@@ -23,5 +27,13 @@ public class PathFinder {
 
   public TestNode[][] getNodes() {
     return nodes;
+  }
+
+  public int getMapWidth() {
+    return mapWidth;
+  }
+
+  public int getMapHeight() {
+    return mapHeight;
   }
 }

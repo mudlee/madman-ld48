@@ -21,7 +21,7 @@ public class GraphBuilder {
     for (int x = 0; x < mapWidth; x++) {
       for (int y = 0; y < mapHeight; y++) {
         if (walkableLayer.getCell(x,y) != null) {
-          nodes[x][y] = new TestNode(x*TestNode.TILE_SIZE, y*TestNode.TILE_SIZE, index++);
+          nodes[x][y] = new TestNode(x, y, index++);
           graph.addNode(nodes[x][y]);
         }
       }

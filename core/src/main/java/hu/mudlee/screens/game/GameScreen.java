@@ -2,24 +2,19 @@ package hu.mudlee.screens.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
-import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import hu.mudlee.Constants;
 import hu.mudlee.actors.Citizen;
 import hu.mudlee.logic.CitizenCreator;
 import hu.mudlee.actors.Player;
@@ -41,8 +36,6 @@ public class GameScreen extends AbstractScreen {
   private final Player player;
   private final OrthographicCamera camera;
   private final Array<Citizen> citizens = new Array<>();
-
-  ShapeRenderer mShapeRenderer;
 
   public GameScreen(GameLayer gameLayer, InputManager inputManager, AssetManager assetManager) {
     this.inputManager = inputManager;
@@ -70,12 +63,10 @@ public class GameScreen extends AbstractScreen {
     final var sidewalk= ((TiledMapTileLayer)map.getLayers().get("Sidewalk"));
 
     // Warping citizens
-    mShapeRenderer = new ShapeRenderer();
-
-    final var pathfinder = new PathFinder(mapWidth, mapHeight, sidewalk);
+    PathFinder pathFinder = new PathFinder(mapWidth, mapHeight, sidewalk);
 
     final var wanderPoints = WanderPointsExtractor.extract(mapLayers);
-    final var citizCreator = new CitizenCreator(assetManager, wanderPoints, pathfinder);
+    final var citizCreator = new CitizenCreator(assetManager, wanderPoints, pathFinder);
     citizens.addAll(citizCreator.create(mapLayers));
   }
 
@@ -133,8 +124,6 @@ public class GameScreen extends AbstractScreen {
     camera.position.x = Math.round(player.getX());
     camera.position.y = Math.round(player.getY());
     camera.update();
-
-    //cameraController.update(delta);
   }
 
   @Override
