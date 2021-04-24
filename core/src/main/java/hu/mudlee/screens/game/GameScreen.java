@@ -83,8 +83,6 @@ public class GameScreen extends AbstractScreen {
     float y = layer.getObjects().get("Player").getProperties().get("y", Float.class);
     player.setPosition(x,y);
 
-    //Player player = actorCreator.createPlayer(10, 10);
-    //inputManager.addInputProcessor(new PlayerController(player));
     stage.addActor(player);
     citizens.forEach(stage::addActor);
   }
@@ -96,27 +94,7 @@ public class GameScreen extends AbstractScreen {
     renderer.setView((OrthographicCamera) stage.getCamera());
     renderer.render();
 
-    boolean moving = false;
-
-    if(Gdx.input.isKeyPressed(Input.Keys.D)) {
-      playerController.moveRight(delta);
-      moving = true;
-    }
-    if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-      playerController.moveLeft(delta);
-      moving = true;
-    }
-    if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-      playerController.moveUp(delta);
-      moving = true;
-    }
-    if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-      playerController.moveDown(delta);
-      moving = true;
-    }
-    if(!moving) {
-      playerController.stop();
-    }
+    handlePlayerMovement(delta);
 
     stage.act(delta);
     stage.draw();
@@ -143,5 +121,31 @@ public class GameScreen extends AbstractScreen {
     //ambient.dispose();
     stage.dispose();
     map.dispose();
+  }
+
+  private void handlePlayerMovement(float delta) {
+    boolean moving = false;
+
+    if(Gdx.input.isKeyPressed(Input.Keys.D)) {
+      playerController.moveRight(delta);
+      moving = true;
+    }
+    else if(Gdx.input.isKeyPressed(Input.Keys.A)) {
+      playerController.moveLeft(delta);
+      moving = true;
+    }
+
+    else if(Gdx.input.isKeyPressed(Input.Keys.W)) {
+      playerController.moveUp(delta);
+      moving = true;
+    }
+    else if(Gdx.input.isKeyPressed(Input.Keys.S)) {
+      playerController.moveDown(delta);
+      moving = true;
+    }
+
+    if(!moving) {
+      playerController.stop();
+    }
   }
 }

@@ -9,14 +9,11 @@ import hu.mudlee.actors.Player;
 
 public class PlayerController {
   private final Player player;
-  private final TiledMap map;
   private final Array<RectangleMapObject> colliders;
   private final Rectangle TMP_RECT = new Rectangle();
-  private boolean moving;
 
   public PlayerController(Player player, TiledMap map) {
     this.player = player;
-    this.map = map;
 
     final var collisionLayer = map.getLayers().get("NotWalkable");
     final var colliderObjects = collisionLayer.getObjects();
@@ -27,7 +24,6 @@ public class PlayerController {
   }
 
   public void stop() {
-    moving = false;
     player.stop();
   }
 
@@ -36,12 +32,7 @@ public class PlayerController {
     if(wouldCollide(newX, player.getY())) {
       return;
     }
-    player.setX(newX);
-
-    if(!moving) {
-      player.walkRight();
-      moving = true;
-    }
+    player.walkRight(newX);
   }
 
   public void moveLeft(float delta) {
@@ -49,11 +40,7 @@ public class PlayerController {
     if(wouldCollide(newX, player.getY())) {
       return;
     }
-    player.setX(newX);
-    if(!moving) {
-      player.walkLeft();
-      moving = true;
-    }
+    player.walkLeft(newX);
   }
 
   public void moveUp(float delta) {
@@ -61,7 +48,7 @@ public class PlayerController {
     if(wouldCollide(player.getX(), newY)) {
       return;
     }
-    player.setY(newY);
+    player.walkUp(newY);
   }
 
   public void moveDown(float delta) {
@@ -69,7 +56,7 @@ public class PlayerController {
     if(wouldCollide(player.getX(), newY)) {
       return;
     }
-    player.setY(newY);
+    player.walkDown(newY);
   }
 
   private boolean wouldCollide(float x, float y) {

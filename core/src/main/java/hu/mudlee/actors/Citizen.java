@@ -22,7 +22,7 @@ import static hu.mudlee.Constants.WORLD_UNIT;
 
 public class Citizen extends Actor {
   private static final int FRAME_COLS = 4;
-  private static final int FRAME_ROWS = 2;
+  private static final int FRAME_ROWS = 3;
   private static final Random random = new Random();
   private final Sprite sprite;
   private final Array<Vector2> wanderPoints;

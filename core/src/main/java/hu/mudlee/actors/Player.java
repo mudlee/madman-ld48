@@ -15,16 +15,17 @@ public class Player extends Actor {
   private enum State {
     IDLE,
     WALKING_RIGHT,
-    WALKING_UP,
-    WALKING_DOWN,
+    WALKING_UPWARDS,
+    WALKING_DOWNWARDS,
     WALKING_LEFT,
   }
 
   private final Sprite sprite;
   private static final int FRAME_COLS = 4;
-  private static final int FRAME_ROWS = 2;
+  private static final int FRAME_ROWS = 3;
   private Animation<TextureRegion> idleAnim;
-  private Animation<TextureRegion> walkHorizontallyAnim;
+  private Animation<TextureRegion> walkHorizontalAnim;
+  private Animation<TextureRegion> walkVerticalAnim;
   private float animStateTime;
   private State state = State.IDLE;
 
@@ -37,7 +38,8 @@ public class Player extends Actor {
 
     animStateTime = 0f;
     createIdleAnim(regions);
-    createWalkHorizontallyAnim(regions);
+    createWalkHorizontalAnim(regions);
+    createWalkVerticalAnim(regions);
 
     sprite = new Sprite(regions[0][0]);
   }
@@ -56,16 +58,48 @@ public class Player extends Actor {
     batch.draw(sprite, getX(), getY(), WORLD_UNIT / 2f, WORLD_UNIT / 2f, WORLD_UNIT, WORLD_UNIT, 1, 1, getRotation());
   }
 
-  public void walkRight() {
+  public void walkRight(int newX) {
+    setX(newX);
+
+    if(state == State.WALKING_RIGHT) {
+      return;
+    }
     animStateTime = 0;
     state = State.WALKING_RIGHT;
     Log.debug("Moving Right");
   }
 
-  public void walkLeft() {
+  public void walkLeft(int newX) {
+    setX(newX);
+
+    if(state == State.WALKING_LEFT) {
+      return;
+    }
     animStateTime = 0;
     state = State.WALKING_LEFT;
     Log.debug("Moving Left");
+  }
+
+  public void walkUp(int newY) {
+    setY(newY);
+
+    if(state == State.WALKING_UPWARDS) {
+      return;
+    }
+    animStateTime = 0;
+    state = State.WALKING_UPWARDS;
+    Log.debug("Moving Up");
+  }
+
+  public void walkDown(int newY) {
+    setY(newY);
+
+    if(state == State.WALKING_DOWNWARDS) {
+      return;
+    }
+    animStateTime = 0;
+    state = State.WALKING_DOWNWARDS;
+    Log.debug("Moving Down");
   }
 
   public void stop() {
@@ -99,7 +133,10 @@ public class Player extends Actor {
         return idleAnim;
       }
       case WALKING_RIGHT, WALKING_LEFT -> {
-        return walkHorizontallyAnim;
+        return walkHorizontalAnim;
+      }
+      case WALKING_UPWARDS, WALKING_DOWNWARDS -> {
+        return walkVerticalAnim;
       }
     }
 
@@ -107,14 +144,14 @@ public class Player extends Actor {
     return idleAnim;
   }
 
-  private void createWalkHorizontallyAnim(TextureRegion[][] textureRegions) {
+  private void createWalkHorizontalAnim(TextureRegion[][] textureRegions) {
     TextureRegion[] frames = new TextureRegion[4];
     frames[0] = textureRegions[0][0];
     frames[1] = textureRegions[0][1];
     frames[2] = textureRegions[0][2];
     frames[3] = textureRegions[0][3];
 
-    walkHorizontallyAnim = new Animation<>(0.1f, frames);
+    walkHorizontalAnim = new Animation<>(0.1f, frames);
   }
 
   private void createIdleAnim(TextureRegion[][] textureRegions) {
@@ -125,5 +162,15 @@ public class Player extends Actor {
     frames[3] = textureRegions[1][3];
 
     idleAnim = new Animation<>(0.5f, frames);
+  }
+
+  private void createWalkVerticalAnim(TextureRegion[][] textureRegions) {
+    TextureRegion[] frames = new TextureRegion[4];
+    frames[0] = textureRegions[2][0];
+    frames[1] = textureRegions[2][1];
+    frames[2] = textureRegions[2][2];
+    frames[3] = textureRegions[2][3];
+
+    walkVerticalAnim = new Animation<>(0.1f, frames);
   }
 }
