@@ -22,7 +22,7 @@ public class CitizenCreator {
   }
 
   public Array<Citizen> create(MapLayers mapLayers) {
-    final var sprite = assetManager.get(Asset.PLAYER_ATLAS.getReference(), Texture.class);
+    final var sprite = assetManager.get(Asset.CITIZEN_ATLAS.getReference(), Texture.class);
     final var citizenWarpPoints = mapLayers.get("CitizenWarpPoints").getObjects();
 
     final var citizens = new Array<Citizen>();

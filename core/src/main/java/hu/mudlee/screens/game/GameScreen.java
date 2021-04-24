@@ -134,7 +134,6 @@ public class GameScreen extends AbstractScreen {
       playerController.moveLeft(delta);
       moving = true;
     }
-
     else if(Gdx.input.isKeyPressed(Input.Keys.W)) {
       playerController.moveUp(delta);
       moving = true;

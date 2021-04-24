@@ -10,6 +10,7 @@ public enum Asset {
   //AUDIO_CLICK("audio/sound/click/click.wav", Sound.class),
   TEXTURE_ATLAS("spritesheet.png", Texture.class),
   PLAYER_ATLAS("player.png", Texture.class),
+  CITIZEN_ATLAS("citizen.png", Texture.class),
   ;
 
   private final String reference;

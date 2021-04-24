@@ -7,41 +7,21 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import hu.mudlee.actors.animators.PlayerAnimations;
 import hu.mudlee.util.Log;
 
-import static hu.mudlee.Constants.WORLD_UNIT;
+import static hu.mudlee.Constants.*;
 
 public class Player extends Actor {
-  private enum State {
-    IDLE,
-    WALKING_RIGHT,
-    WALKING_UPWARDS,
-    WALKING_DOWNWARDS,
-    WALKING_LEFT,
-  }
-
   private final Sprite sprite;
-  private static final int FRAME_COLS = 4;
-  private static final int FRAME_ROWS = 3;
-  private Animation<TextureRegion> idleAnim;
-  private Animation<TextureRegion> walkHorizontalAnim;
-  private Animation<TextureRegion> walkVerticalAnim;
   private float animStateTime;
-  private State state = State.IDLE;
+  private final PlayerAnimations animations;
+  private MoveDirection moveDirection = MoveDirection.IDLE;
 
   public Player(Texture spritesheet) {
-    final var regions = TextureRegion.split(
-      spritesheet,
-      spritesheet.getWidth() / FRAME_COLS,
-      spritesheet.getHeight() / FRAME_ROWS
-    );
-
     animStateTime = 0f;
-    createIdleAnim(regions);
-    createWalkHorizontalAnim(regions);
-    createWalkVerticalAnim(regions);
-
-    sprite = new Sprite(regions[0][0]);
+    animations = new PlayerAnimations(spritesheet);
+    sprite = new Sprite(animations.idleFrame);
   }
 
   @Override
@@ -54,57 +34,56 @@ public class Player extends Actor {
   @Override
   public void draw(Batch batch, float parentAlpha) {
     super.draw(batch, parentAlpha);
-
     batch.draw(sprite, getX(), getY(), WORLD_UNIT / 2f, WORLD_UNIT / 2f, WORLD_UNIT, WORLD_UNIT, 1, 1, getRotation());
   }
 
   public void walkRight(int newX) {
     setX(newX);
 
-    if(state == State.WALKING_RIGHT) {
+    if(moveDirection == MoveDirection.RIGHT) {
       return;
     }
     animStateTime = 0;
-    state = State.WALKING_RIGHT;
+    moveDirection = MoveDirection.RIGHT;
     Log.debug("Moving Right");
   }
 
   public void walkLeft(int newX) {
     setX(newX);
 
-    if(state == State.WALKING_LEFT) {
+    if(moveDirection == MoveDirection.LEFT) {
       return;
     }
     animStateTime = 0;
-    state = State.WALKING_LEFT;
+    moveDirection = MoveDirection.LEFT;
     Log.debug("Moving Left");
   }
 
   public void walkUp(int newY) {
     setY(newY);
 
-    if(state == State.WALKING_UPWARDS) {
+    if(moveDirection == MoveDirection.UPWARDS) {
       return;
     }
     animStateTime = 0;
-    state = State.WALKING_UPWARDS;
+    moveDirection = MoveDirection.UPWARDS;
     Log.debug("Moving Up");
   }
 
   public void walkDown(int newY) {
     setY(newY);
 
-    if(state == State.WALKING_DOWNWARDS) {
+    if(moveDirection == MoveDirection.DOWNWARDS) {
       return;
     }
     animStateTime = 0;
-    state = State.WALKING_DOWNWARDS;
+    moveDirection = MoveDirection.DOWNWARDS;
     Log.debug("Moving Down");
   }
 
   public void stop() {
     animStateTime = 0;
-    state = State.IDLE;
+    moveDirection = MoveDirection.IDLE;
   }
 
   public Sprite getSprite() {
@@ -112,8 +91,8 @@ public class Player extends Actor {
   }
 
   private TextureRegion getActiveFrame() {
-    final var region = getActiveanum().getKeyFrame(animStateTime,true);
-    if(state == State.WALKING_LEFT) {
+    final var region = getActiveAnim().getKeyFrame(animStateTime,true);
+    if(moveDirection == MoveDirection.LEFT) {
       if(!region.isFlipX()) {
         region.flip(true, false);
       }
@@ -127,50 +106,20 @@ public class Player extends Actor {
     return region;
   }
 
-  private Animation<TextureRegion> getActiveanum(){
-    switch (state){
+  private Animation<TextureRegion> getActiveAnim(){
+    switch (moveDirection){
       case IDLE -> {
-        return idleAnim;
+        return animations.idleAnim;
       }
-      case WALKING_RIGHT, WALKING_LEFT -> {
-        return walkHorizontalAnim;
+      case RIGHT, LEFT -> {
+        return animations.walkHorizontalAnim;
       }
-      case WALKING_UPWARDS, WALKING_DOWNWARDS -> {
-        return walkVerticalAnim;
+      case UPWARDS, DOWNWARDS -> {
+        return animations.walkVerticalAnim;
       }
     }
 
-    Gdx.app.log("PLAYER", "unhandled state: "+state);
-    return idleAnim;
-  }
-
-  private void createWalkHorizontalAnim(TextureRegion[][] textureRegions) {
-    TextureRegion[] frames = new TextureRegion[4];
-    frames[0] = textureRegions[0][0];
-    frames[1] = textureRegions[0][1];
-    frames[2] = textureRegions[0][2];
-    frames[3] = textureRegions[0][3];
-
-    walkHorizontalAnim = new Animation<>(0.1f, frames);
-  }
-
-  private void createIdleAnim(TextureRegion[][] textureRegions) {
-    TextureRegion[] frames = new TextureRegion[4];
-    frames[0] = textureRegions[1][0];
-    frames[1] = textureRegions[1][1];
-    frames[2] = textureRegions[1][2];
-    frames[3] = textureRegions[1][3];
-
-    idleAnim = new Animation<>(0.5f, frames);
-  }
-
-  private void createWalkVerticalAnim(TextureRegion[][] textureRegions) {
-    TextureRegion[] frames = new TextureRegion[4];
-    frames[0] = textureRegions[2][0];
-    frames[1] = textureRegions[2][1];
-    frames[2] = textureRegions[2][2];
-    frames[3] = textureRegions[2][3];
-
-    walkVerticalAnim = new Animation<>(0.1f, frames);
+    Gdx.app.log("PLAYER", "unhandled state: "+ moveDirection);
+    return animations.idleAnim;
   }
 }
