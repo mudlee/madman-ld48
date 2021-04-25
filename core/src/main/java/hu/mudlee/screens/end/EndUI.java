@@ -8,6 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import hu.mudlee.actors.ui.CompletionTime;
+import hu.mudlee.actors.ui.ElapsedTime;
 import hu.mudlee.layers.GameLayer;
 import hu.mudlee.ui.AbstractUILayout;
 import hu.mudlee.ui.Font;
@@ -50,9 +52,12 @@ public class EndUI extends AbstractUILayout {
 
         setFillParent(true);
         setBackground(GfxUtil.createBg(1,1, Color.BLACK));
+
         add(new Image(textureRegions[0][won ? 0 : 1])).growY().width(400).height(400).center();
         row();
         add(restartButton).width(400).pad(15);
+        row();
         bottom();
+        add(new CompletionTime(won, ElapsedTime.timeSecs)).grow().center();
     }
 }

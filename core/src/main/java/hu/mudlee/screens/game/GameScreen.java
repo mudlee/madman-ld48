@@ -109,7 +109,6 @@ public class GameScreen extends AbstractScreen {
     inputManager.addInputProcessor(UILayer.getInputProcessor(), UILayer.class.getName());
     inputManager.addInputProcessor(stage, GameScreen.class.getName());
     inputManager.addInputProcessor(gameInputProcessor);
-    //ambient.play();
 
     final var playerWarp = map.getLayers().get(PLAYER_WARP_POINT);
     float playerWarpX = playerWarp.getObjects().get("Player").getProperties().get("x", Float.class);

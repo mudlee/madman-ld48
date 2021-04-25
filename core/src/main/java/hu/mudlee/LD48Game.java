@@ -31,7 +31,7 @@ public class LD48Game implements ApplicationListener {
 
     layerStack.addLayer(gameLayer);
     layerStack.addLayer(new UILayer(uiStage));
-    layerStack.addLayer(new DebugInfoLayer());
+    //layerStack.addLayer(new DebugInfoLayer());
     layerStack.create();
 
     gameLayer.loadGame();

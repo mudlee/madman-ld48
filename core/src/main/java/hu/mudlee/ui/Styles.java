@@ -41,7 +41,7 @@ public class Styles {
     return style;
   }
 
-  public static Label.LabelStyle decibel(Font font, int fontSize) {
+  public static Label.LabelStyle bigLabel(Font font, int fontSize) {
     ensureFontGenerator(font);
 
     final var style = new Label.LabelStyle();

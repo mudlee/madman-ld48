@@ -14,7 +14,7 @@ public class DecibelMeter extends Table {
 
   public DecibelMeter() {
     setFillParent(true);
-    label = new Label("%d decibel".formatted(decibel), Styles.decibel(Font.DEFAULT, 48));
+    label = new Label("%d decibel".formatted(decibel), Styles.bigLabel(Font.DEFAULT, 48));
     add(label).expand().right().top().pad(20);
 
     MessageBus.register(Event.CITIZEN_HYPNOTIZED, () -> {

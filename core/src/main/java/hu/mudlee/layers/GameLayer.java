@@ -46,7 +46,6 @@ public class GameLayer extends Game implements Layer {
         ambient.setLooping(true);
         ambient.setVolume(0.3f);
         ambient.play();
-        //Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
         setScreen(new HomeScreen(this, inputManager, assetManager));
       }
 
