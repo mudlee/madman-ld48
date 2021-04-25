@@ -40,6 +40,7 @@ public class GameScreen extends AbstractScreen {
   private final Player player;
   private final OrthographicCamera camera;
   private final Array<Citizen> citizens = new Array<>();
+  private final Color clearColor = new Color(0x1a2239ff);
 
   public GameScreen(GameLayer gameLayer, InputManager inputManager, AssetManager assetManager) {
     this.gameLayer = gameLayer;
@@ -51,7 +52,7 @@ public class GameScreen extends AbstractScreen {
 
     stage = new Stage(viewport);
 
-    UILayer.setUILayout(new GameUI(gameLayer, assetManager));
+    UILayer.setUILayout(new GameUI(gameLayer));
 
     map = new TmxMapLoader().load("map.tmx");
     mapRenderer = new OrthogonalTiledMapRenderer(map);
@@ -79,6 +80,7 @@ public class GameScreen extends AbstractScreen {
       citizens.forEach(Citizen::pause);
     });
     MessageBus.register(Event.GAME_RESUMED, () -> citizens.forEach(Citizen::resume));
+    MessageBus.register(Event.ZERO_DECIBEL_REACHED, () -> gameLayer.winGame());
   }
 
   @Override
@@ -101,7 +103,7 @@ public class GameScreen extends AbstractScreen {
 
   @Override
   public void render(float delta) {
-    ScreenUtils.clear(Color.WHITE);
+    ScreenUtils.clear(clearColor);
 
     mapRenderer.setView((OrthographicCamera) stage.getCamera());
     mapRenderer.render();

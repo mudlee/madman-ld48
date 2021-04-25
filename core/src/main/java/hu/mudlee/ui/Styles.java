@@ -30,11 +30,22 @@ public class Styles {
     return style;
   }
 
+  public static Label.LabelStyle decibel(Font font, int fontSize) {
+    ensureFontGenerator(font);
+
+    final var style = new Label.LabelStyle();
+    style.font = generateMsgBubbleFont(font, fontSize);
+    style.fontColor = Color.WHITE;
+    style.background = GfxUtil.createBg(1,1, Constants.CITIZEN_MSG_BG);
+
+    return style;
+  }
+
   public static TextButton.TextButtonStyle menuButton(Font font, int fontSize) {
     ensureFontGenerator(font);
 
     final var style = new TextButton.TextButtonStyle();
-    style.up = defaultSkin().newDrawable("white", new Color(0x7a2b24ff));
+    style.up = defaultSkin().newDrawable("white", new Color(0x1a2239ff));
     style.checked = defaultSkin().newDrawable("white", Color.BLUE);
     style.over = defaultSkin().newDrawable("white", new Color(0x8c2b24ff));
     style.font = generateFont(font, fontSize);

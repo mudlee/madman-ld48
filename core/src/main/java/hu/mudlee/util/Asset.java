@@ -5,12 +5,13 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 
 public enum Asset {
-  //TEXTURE_TILE("tile.png", Texture.class),
-  //AUDIO_HOME_AMBIENT("audio/music/home/ObservingTheStar.ogg", Music.class),
+  AUDIO_AMBIENT("ambient_game.ogg", Music.class),
   //AUDIO_CLICK("audio/sound/click/click.wav", Sound.class),
   TEXTURE_ATLAS("spritesheet.png", Texture.class),
   PLAYER_ATLAS("player.png", Texture.class),
   CITIZEN_ATLAS("citizen.png", Texture.class),
+  BIG_WIN_END_ATLAS("big_winend_images.png", Texture.class),
+  BIG_HOME_ATLAS("big_home.png", Texture.class),
   ;
 
   private final String reference;

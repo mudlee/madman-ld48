@@ -21,7 +21,7 @@ public class LoadingScreen extends AbstractScreen {
     this.gameLayer = gameLayer;
   }
 
-  public boolean isAnimating(){
+  public boolean isAnimating() {
     return progressBar.isAnimating();
   }
 
@@ -34,18 +34,18 @@ public class LoadingScreen extends AbstractScreen {
     final var height = 50;
 
     final var style = new ProgressBar.ProgressBarStyle();
-    style.background = GfxUtil.createBg(width, height, new Color(0xedc89aff));
-    style.knob = GfxUtil.createBg(0, height, new Color(0x5b3628ff));
-    style.knobBefore = GfxUtil.createBg(width, height, new Color(0x5b3628ff));
+    style.background = GfxUtil.createBg(width, height, new Color(0x1a2239ff));
+    style.knob = GfxUtil.createBg(0, height, Color.WHITE);
+    style.knobBefore = GfxUtil.createBg(width, height, Color.WHITE);
 
-    progressBar = new ProgressBar(0f,1f,0.01f,false,style);
+    progressBar = new ProgressBar(0f, 1f, 0.01f, false, style);
     progressBar.setValue(0f);
     progressBar.setAnimateDuration(0.25f);
     progressBar.setWidth(width);
     progressBar.setHeight(height);
 
     final var cont = new Container<>(progressBar);
-    cont.width((float)width);
+    cont.width((float) width);
 
     final var rootTable = new Table();
     rootTable.setFillParent(true);
@@ -55,7 +55,7 @@ public class LoadingScreen extends AbstractScreen {
 
   @Override
   public void render(float delta) {
-    ScreenUtils.clear(Color.WHITE);
+    ScreenUtils.clear(Color.BLACK);
 
     progressBar.setValue(gameLayer.getGameLoadingProgress());
 
@@ -65,7 +65,7 @@ public class LoadingScreen extends AbstractScreen {
 
   @Override
   public void resize(int width, int height) {
-    stage.getViewport().update(width,height);
+    stage.getViewport().update(width, height);
   }
 
   @Override

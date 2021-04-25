@@ -2,12 +2,14 @@ package hu.mudlee.layers;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import hu.mudlee.GameState;
 import hu.mudlee.input.InputManager;
 import hu.mudlee.messaging.Event;
 import hu.mudlee.messaging.MessageBus;
 import hu.mudlee.screens.game.GameScreen;
 import hu.mudlee.screens.home.HomeScreen;
+import hu.mudlee.screens.end.EndScreen;
 import hu.mudlee.screens.loading.LoadingScreen;
 import hu.mudlee.util.Asset;
 import hu.mudlee.util.Log;
@@ -20,6 +22,7 @@ public class GameLayer extends Game implements Layer {
   private boolean assetsLoaded;
   private float gameLoadingProgress;
   private GameState state = GameState.NOT_RUNNING;
+  private Music ambient;
 
   public GameLayer(AssetManager assetManager, InputManager inputManager) {
     this.assetManager = assetManager;
@@ -35,13 +38,15 @@ public class GameLayer extends Game implements Layer {
   public void render() {
     super.render();
 
-    if(!assetsLoaded) {
-      final var loadingScreen = (LoadingScreen)screen;
-      if(assetManager.update() && !loadingScreen.isAnimating()) {
+    if (!assetsLoaded) {
+      final var loadingScreen = (LoadingScreen) screen;
+      if (assetManager.update() && !loadingScreen.isAnimating()) {
         assetsLoaded = true;
-        //setScreen(new HomeScreen(this, inputManager, assetManager));
-        // TODO
-        setScreen(new GameScreen(this, inputManager, assetManager));
+        ambient = assetManager.get(Asset.AUDIO_AMBIENT.getReference(), Music.class);
+        ambient.setLooping(true);
+        ambient.play();
+        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        setScreen(new HomeScreen(this, inputManager, assetManager));
       }
 
       gameLoadingProgress = assetManager.getProgress();
@@ -51,7 +56,7 @@ public class GameLayer extends Game implements Layer {
   @Override
   public void setScreen(Screen screen) {
     System.gc();
-    Log.debug("Switching screen to "+screen.getClass().getName());
+    Log.debug("Switching screen to " + screen.getClass().getName());
     super.setScreen(screen);
   }
 
@@ -77,6 +82,18 @@ public class GameLayer extends Game implements Layer {
     Log.debug("Game started");
     state = GameState.RUNNING;
     setScreen(new GameScreen(this, inputManager, assetManager));
+  }
+
+  public void loseGame() {
+    Log.debug("Game lost");
+    state = GameState.NOT_RUNNING;
+    setScreen(new EndScreen(false, this, inputManager, assetManager));
+  }
+
+  public void winGame() {
+    Log.debug("Game won");
+    state = GameState.NOT_RUNNING;
+    setScreen(new EndScreen(true, this, inputManager, assetManager));
   }
 
   public void restartGame() {

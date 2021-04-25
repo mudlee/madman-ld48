@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import hu.mudlee.actors.animators.CitizenAnimations;
+import hu.mudlee.messaging.Event;
+import hu.mudlee.messaging.MessageBus;
 import hu.mudlee.pathfinding.ManhattanDistanceHeuristic;
 import hu.mudlee.pathfinding.PathFinder;
 import hu.mudlee.pathfinding.Node;
@@ -97,6 +99,7 @@ public class Citizen extends Group {
   public void hypnotized() {
     showMsg = false;
     hypnotized = true;
+    MessageBus.broadcast(Event.CITIZEN_HYPNOTIZED);
   }
 
   public boolean isHypnotized() {
