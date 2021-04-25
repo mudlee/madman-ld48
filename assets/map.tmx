@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="500" height="500" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="118">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="500" height="500" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="121">
  <tileset firstgid="1" source="spritesheet.tsx"/>
  <layer id="5" name="Road" width="500" height="500">
   <data encoding="csv">
@@ -1583,6 +1583,9 @@
   <object id="99" name="Police2" x="4088" y="3886" width="21" height="22"/>
   <object id="116" name="Police3" x="4451" y="4266" width="18" height="18"/>
   <object id="117" name="Police4" x="4620" y="4006" width="23" height="21"/>
+  <object id="118" name="Police5" x="4156" y="3603" width="23" height="18"/>
+  <object id="119" name="Police6" x="4093" y="4257" width="24" height="28"/>
+  <object id="120" name="Police7" x="4834" y="4212" width="28" height="28"/>
  </objectgroup>
  <objectgroup id="9" name="PoliceCarWanderPoints">
   <object id="100" x="4090" y="3610" width="12" height="11"/>

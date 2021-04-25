@@ -2,11 +2,14 @@ package hu.mudlee.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -18,6 +21,8 @@ import hu.mudlee.messaging.MessageBus;
 import hu.mudlee.pathfinding.ManhattanDistanceHeuristic;
 import hu.mudlee.pathfinding.Node;
 import hu.mudlee.pathfinding.PathFinder;
+import hu.mudlee.util.Asset;
+import hu.mudlee.util.Log;
 
 import java.util.Random;
 
@@ -38,15 +43,19 @@ public class PoliceCar extends Group {
   private MoveDirection moveDirection = MoveDirection.IDLE;
   private boolean paused;
   private boolean playerCatched;
+  private boolean chasing;
   private boolean goingToTheFelonyPlace;
+  private Sound neno;
 
-  public PoliceCar(Texture spritesheet, Array<Vector2> wanderPoints, PathFinder pathfinder) {
+  public PoliceCar(int index, Texture spritesheet, Array<Vector2> wanderPoints, PathFinder pathfinder, AssetManager assetManager) {
     this.wanderPoints = wanderPoints;
     this.pathfinder = pathfinder;
     path = new DefaultGraphPath<>();
+    setName("Police-%d".formatted(index));
 
     animations = new PoliceCarAnimations(spritesheet);
     sprite = new Sprite(animations.idleFrame);
+    neno = assetManager.get(Asset.NENO.getReference(), Sound.class);
   }
 
   public void pause() {
@@ -73,9 +82,9 @@ public class PoliceCar extends Group {
       return;
     }
 
-    if (nextTarget == null) {
+    if (!chasing && nextTarget == null) {
       findPathToNextWanderPoint();
-      moveTowardsToNextLocation(true, POLICE_CAR_MOVE_SPEED);
+      moveTowardsToNextLocation(POLICE_CAR_MOVE_SPEED);
     }
   }
 
@@ -85,7 +94,59 @@ public class PoliceCar extends Group {
     batch.draw(sprite, getX(), getY(), WORLD_UNIT / 2f, WORLD_UNIT / 2f, WORLD_UNIT * 2, WORLD_UNIT * 2, 1, 1, getRotation());
   }
 
-  private void stopMoving() {
+  public boolean didCatch() {
+    return playerCatched;
+  }
+
+  public void catched() {
+    Log.debug("%s catched the player at x: %d y: %d".formatted(getName(), (int)getX() / WORLD_UNIT, (int)getY() / WORLD_UNIT));
+
+    final var startAction = new Action() {
+      @Override
+      public boolean act(float delta) {
+        neno.play();
+        return true;
+      }
+    };
+
+    final var stopAction = new Action() {
+      @Override
+      public boolean act(float delta) {
+        neno.stop();
+        return true;
+      }
+    };
+
+    stopMoving();
+    addAction(Actions.sequence(
+      startAction,
+      Actions.delay(4f, stopAction)
+    ));
+    playerCatched = true;
+    MessageBus.broadcast(Event.PLAYER_CATCHED);
+    // The best place for this code, I know
+
+    addAction(Actions.delay(3f, new Action() {
+      @Override
+      public boolean act(float delta) {
+        MessageBus.broadcast(Event.GAME_ENDED);
+        return true;
+      }
+    }));
+  }
+
+  public void goToFelonyPlace(float x, float y) {
+    Log.debug("%s going to the catched player".formatted(getName()));
+    stopMoving();
+    final var startNode = pathfinder.getNodes()[(int) getX() / WORLD_UNIT][(int) getY() / WORLD_UNIT];
+    final var endNode = pathfinder.getNodes()[(int) x / WORLD_UNIT][(int) y / WORLD_UNIT];
+    pathfinder.searchNodePath(startNode, endNode, heuristic, path);
+    chasing = true;
+    goingToTheFelonyPlace = true;
+    moveTowardsToNextLocation(POLICE_CAR_MOVE_FAST_SPEED);
+  }
+
+  public void stopMoving() {
     clearActions();
     path.clear();
     currentPathIndex = 0;
@@ -93,7 +154,7 @@ public class PoliceCar extends Group {
     moveDirection = MoveDirection.IDLE;
   }
 
-  private void moveTowardsToNextLocation(boolean continueAfterReached, float speed) {
+  private void moveTowardsToNextLocation(float speed) {
     final var moveFinished = new Action() {
       @Override
       public boolean act(float delta) {
@@ -104,9 +165,7 @@ public class PoliceCar extends Group {
           return true;
         }
 
-        if (continueAfterReached) {
-          moveTowardsToNextLocation(continueAfterReached, speed);
-        }
+        moveTowardsToNextLocation(speed);
         return true;
       }
     };
@@ -164,25 +223,6 @@ public class PoliceCar extends Group {
     return region;
   }
 
-  public boolean didCatch() {
-    return playerCatched;
-  }
-
-  public void catched() {
-    stopMoving();
-    playerCatched = true;
-    MessageBus.broadcast(Event.PLAYER_CATCHED);
-  }
-
-  public void goToFelonyPlace(float x, float y) {
-    stopMoving();
-    final var startNode = pathfinder.getNodes()[(int) getX() / WORLD_UNIT][(int) getY() / WORLD_UNIT];
-    final var endNode = pathfinder.getNodes()[(int) x / WORLD_UNIT][(int) y / WORLD_UNIT];
-    pathfinder.searchNodePath(startNode, endNode, heuristic, path);
-    goingToTheFelonyPlace = true;
-    moveTowardsToNextLocation(false, POLICE_CAR_MOVE_FAST_SPEED);
-  }
-
   private Animation<TextureRegion> getActiveAnim() {
     if (playerCatched) {
       if (prevDirection == MoveDirection.LEFT || prevDirection == MoveDirection.RIGHT)
@@ -199,10 +239,16 @@ public class PoliceCar extends Group {
           return animations.driveHorizontalAnim;
       }
       case RIGHT, LEFT -> {
-        return animations.driveHorizontalAnim;
+        if(chasing)
+          return animations.driveHorizontalCatchAnim;
+        else
+          return animations.driveHorizontalAnim;
       }
       case UPWARDS, DOWNWARDS -> {
-        return animations.driveVerticalAnim;
+        if(chasing)
+          return animations.driveVerticalCatchAnim;
+        else
+          return animations.driveVerticalAnim;
       }
     }
 

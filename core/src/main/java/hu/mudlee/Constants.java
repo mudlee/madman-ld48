@@ -7,8 +7,8 @@ import java.util.List;
 
 public class Constants {
   // APP
-  public static final int WINDOW_WIDTH = 1440;
-  public static final int WINDOW_HEIGHT = 800;
+  public static final int WINDOW_WIDTH = 1920;
+  public static final int WINDOW_HEIGHT = 1080;
 
   // Tiled
   public static final String CITIZEN_WANDER_POINTS = "CitizenWanderPoints";
@@ -20,10 +20,11 @@ public class Constants {
   // GAME
   public static final int WORLD_UNIT = 16;
   public static final int START_DECIBEL = 80;
-  public static final int DECREASE_DECIBEL_PER_CITIZEN = 10;
+  public static final int DECIBEL_GOAL = 40;
+  public static final int DECREASE_DECIBEL_PER_CITIZEN = 5;
   public static final List<String> CITIZEN_MESSAGES = Arrays.asList("Huh?", "F@ck!", "What?", "Go Away!", "Hey!", "Bro?", "Bro!", "4A$#@5!?","$5$#@%1!","Que?");
   public static final List<String> PLAYER_MESSAGES = Arrays.asList("Stop!", "Calm down.", "Close your eyes", "Good.", "Go deep.", "Deeper.", "And deeeeeper.", "Woodooo!");
-  public static final int PLAYER_MESSAGE_FREQUENCY_SEC = 2;
+  public static final float PLAYER_MESSAGE_FREQUENCY_SEC = 2.7f;
   public static final Color CITIZEN_MSG_BG = new Color(0x1d213cff);
   public static final int CITIZEN_MSG_FREQUENCE_SEC = 5;
   public static final int HYPNOTIZATION_RANGE_UNIT = 3;
@@ -39,7 +40,7 @@ public class Constants {
   public static final float CITIZEN_HYPNOTIZED_ANIM_SPEED = 0.2f;
   public static final float POLICE_CAR_ANIM_SPEED = 0.2f;
   public static final float POLICE_CAR_MOVE_SPEED = 0.5f;
-  public static final float POLICE_CAR_MOVE_FAST_SPEED = 1f;
+  public static final float POLICE_CAR_MOVE_FAST_SPEED = 0.1f;
 
   // SPRITES
   public static final int PLAYER_SHEET_ROWS = 3;

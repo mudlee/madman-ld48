@@ -17,7 +17,6 @@ public class HomeImageAnimations {
       spritesheet.getHeight() / BIG_HOME_ROWS
     );
 
-    System.out.println(regions.length);
     anim = createAnim(regions);
     startFrame = regions[0][0];
   }

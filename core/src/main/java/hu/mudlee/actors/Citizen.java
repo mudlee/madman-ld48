@@ -2,6 +2,8 @@ package hu.mudlee.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -22,8 +24,11 @@ import hu.mudlee.pathfinding.PathFinder;
 import hu.mudlee.pathfinding.Node;
 import hu.mudlee.ui.Font;
 import hu.mudlee.ui.Styles;
+import hu.mudlee.util.Asset;
 import hu.mudlee.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static hu.mudlee.Constants.*;
@@ -38,6 +43,8 @@ public class Citizen extends Group {
   private final ManhattanDistanceHeuristic heuristic = new ManhattanDistanceHeuristic();
   private final CitizenAnimations animations;
   private final Label msg;
+  private final List<Sound> mumblings = new ArrayList<>();
+  private Sound talkQuestion;
   private boolean showMsg;
   private long showMsgAfter;
   private Vector2 nextTarget;
@@ -49,7 +56,7 @@ public class Citizen extends Group {
   private boolean beingHypnotized;
   private boolean paused;
 
-  public Citizen(int index, Texture spritesheet, Array<Vector2> wanderPoints, PathFinder pathfinder) {
+  public Citizen(int index, Texture spritesheet, Array<Vector2> wanderPoints, PathFinder pathfinder, AssetManager assetManager) {
     this.name = "Citizen-%d".formatted(index);
     this.wanderPoints = wanderPoints;
     this.pathfinder = pathfinder;
@@ -62,6 +69,17 @@ public class Citizen extends Group {
     msg.setPosition(getX(), getY());
     addActor(msg);
 
+    talkQuestion = assetManager.get(Asset.TALK_QUESTION.getReference(), Sound.class);
+    mumblings.add(assetManager.get(Asset.MUMBLING_1.getReference(), Sound.class));
+    mumblings.add(assetManager.get(Asset.MUMBLING_2.getReference(), Sound.class));
+    mumblings.add(assetManager.get(Asset.MUMBLING_3.getReference(), Sound.class));
+    mumblings.add(assetManager.get(Asset.MUMBLING_4.getReference(), Sound.class));
+    mumblings.add(assetManager.get(Asset.MUMBLING_5.getReference(), Sound.class));
+    mumblings.add(assetManager.get(Asset.MUMBLING_6.getReference(), Sound.class));
+    mumblings.add(assetManager.get(Asset.MUMBLING_7.getReference(), Sound.class));
+    mumblings.add(assetManager.get(Asset.MUMBLING_8.getReference(), Sound.class));
+    mumblings.add(assetManager.get(Asset.MUMBLING_9.getReference(), Sound.class));
+    mumblings.add(assetManager.get(Asset.MUMBLING_10.getReference(), Sound.class));
     initiateNextMsg();
   }
 
@@ -80,6 +98,7 @@ public class Citizen extends Group {
     showMsg = true;
     beingHypnotized = true;
     msg.setText("I'm sorry?");
+    talkQuestion.play();
   }
 
   public void interruptHypnotization(){
@@ -129,7 +148,9 @@ public class Citizen extends Group {
     msg.setPosition(getX(), getY() + 15);
 
     if (!showMsg && TimeUtils.millis() > showMsgAfter && TimeUtils.millis() < showMsgTill) {
-      msg.setText(CITIZEN_MESSAGES.get(random.nextInt(CITIZEN_MESSAGES.size())));
+      int rand = random.nextInt(CITIZEN_MESSAGES.size());
+      msg.setText(CITIZEN_MESSAGES.get(rand));
+      mumblings.get(rand).play(0.1f);
       showMsg = true;
     }
 

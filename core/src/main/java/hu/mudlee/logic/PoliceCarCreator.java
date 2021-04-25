@@ -33,7 +33,7 @@ public class PoliceCarCreator {
 
     for (var i = 0; i < warpPoints.getCount(); i++) {
       final var warpPoint = warpPoints.get(i);
-      final var policeCar = new PoliceCar(sprite, wanderPoints, pathfinder);
+      final var policeCar = new PoliceCar(i, sprite, wanderPoints, pathfinder, assetManager);
       policeCar.setPosition(
         warpPoint.getProperties().get("x", Float.class),
         warpPoint.getProperties().get("y", Float.class)

@@ -30,6 +30,17 @@ public class Styles {
     return style;
   }
 
+  public static Label.LabelStyle instructions(Font font, int fontSize) {
+    ensureFontGenerator(font);
+
+    final var style = new Label.LabelStyle();
+    style.font = generateMsgBubbleFont(font, fontSize);
+    style.fontColor = Color.WHITE;
+    style.background = GfxUtil.createBg(1,1, Color.BLACK);
+
+    return style;
+  }
+
   public static Label.LabelStyle decibel(Font font, int fontSize) {
     ensureFontGenerator(font);
 

@@ -1,6 +1,8 @@
 package hu.mudlee.actors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -15,6 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import hu.mudlee.actors.animators.PlayerAnimations;
 import hu.mudlee.ui.Font;
 import hu.mudlee.ui.Styles;
+import hu.mudlee.util.Asset;
 import hu.mudlee.util.Log;
 
 import static hu.mudlee.Constants.*;
@@ -33,8 +36,10 @@ public class Player extends Group {
   private Array<PoliceCar> policeCars;
   private boolean hypnotizing;
   private Citizen victim;
+  private boolean playerCatched;
+  private Sound hypnoSound;
 
-  public Player(Texture spritesheet) {
+  public Player(Texture spritesheet, AssetManager assetManager) {
     animStateTime = 0f;
     animations = new PlayerAnimations(spritesheet);
     sprite = new Sprite(animations.idleFrame);
@@ -49,6 +54,8 @@ public class Player extends Group {
     TMP_VICTIM_RECT.height = WORLD_UNIT * HYPNOTIZATION_RANGE_UNIT;
     TMP_POLICE_RECT.width = WORLD_UNIT * POLICE_CATCH_RANGE_UNIT;
     TMP_POLICE_RECT.height = WORLD_UNIT * POLICE_CATCH_RANGE_UNIT;
+
+    hypnoSound = assetManager.get(Asset.HYPNO.getReference(), Sound.class);
   }
 
   @Override
@@ -136,6 +143,7 @@ public class Player extends Group {
       return;
     }
 
+    hypnoSound.play(1.3f);
     victim.beginHypnotization();
     hypnotizing = true;
     showMsg = true;
@@ -164,6 +172,7 @@ public class Player extends Group {
       return;
     }
 
+    hypnoSound.stop();
     hypnotizing = false;
 
     clearActions();
@@ -182,16 +191,29 @@ public class Player extends Group {
   private void actIfAnyPoliceNearby() {
     TMP_PLAYER_RECT.setPosition(getX(), getY());
     boolean catched = false;
+    float catchX = 0, catchY = 0;
+
     for (PoliceCar policeCar : policeCars) {
       if(policeCar.didCatch()) {
         continue;
       }
 
       TMP_POLICE_RECT.setPosition(policeCar.getX(), policeCar.getY());
-      if(TMP_PLAYER_RECT.overlaps(TMP_POLICE_RECT)) {
-        Log.debug("Police catches %s".formatted(policeCar.getName()));
+      if(playerCatched) {
+        TMP_POLICE_RECT.width *= 2;
+        TMP_POLICE_RECT.height *= 2;
+        if(TMP_PLAYER_RECT.overlaps(TMP_POLICE_RECT)) {
+          policeCar.stopMoving(); // TODO: somewhy this does not work
+        }
+      }
+      else if(TMP_PLAYER_RECT.overlaps(TMP_POLICE_RECT)) {
+        Log.debug("Police %s catched player".formatted(policeCar.getName()));
         policeCar.catched();
+        catchX = policeCar.getX();
+        catchY = policeCar.getY();
         catched = true;
+        playerCatched = true;
+        hypnoSound.stop();
         break;
       }
     }
@@ -202,7 +224,7 @@ public class Player extends Group {
           continue;
         }
 
-        policeCar.goToFelonyPlace(policeCar.getX(), policeCar.getY());
+        policeCar.goToFelonyPlace(catchX, catchY);
       }
     }
   }

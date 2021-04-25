@@ -64,7 +64,7 @@ public class GameScreen extends AbstractScreen {
 
     final var playerSprite = assetManager.get(Asset.PLAYER_ATLAS.getReference(), Texture.class);
 
-    player = new Player(playerSprite);
+    player = new Player(playerSprite, assetManager);
     playerController = new PlayerController(player, map);
 
     final var mapLayers = map.getLayers();
@@ -99,7 +99,8 @@ public class GameScreen extends AbstractScreen {
       playerController.stopForever();
       citizens.forEach(Citizen::pause);
     });
-    MessageBus.register(Event.ZERO_DECIBEL_REACHED, gameLayer::winGame);
+    MessageBus.register(Event.DECIBEL_GOAL_REACHED, gameLayer::winGame);
+    MessageBus.register(Event.GAME_ENDED, gameLayer::loseGame);
   }
 
   @Override
@@ -152,8 +153,6 @@ public class GameScreen extends AbstractScreen {
   @Override
   public void dispose() {
     inputManager.clearInputProcessors();
-    //ambient.stop();
-    //ambient.dispose();
     stage.dispose();
     map.dispose();
   }

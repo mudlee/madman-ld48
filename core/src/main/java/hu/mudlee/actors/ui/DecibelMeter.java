@@ -20,8 +20,8 @@ public class DecibelMeter extends Table {
     MessageBus.register(Event.CITIZEN_HYPNOTIZED, () -> {
       decibel -= Constants.DECREASE_DECIBEL_PER_CITIZEN;
       this.label.setText("%d decibel".formatted(decibel));
-      if(decibel == 0) {
-        MessageBus.broadcast(Event.ZERO_DECIBEL_REACHED);
+      if(decibel <= Constants.DECIBEL_GOAL) {
+        MessageBus.broadcast(Event.DECIBEL_GOAL_REACHED);
       }
     });
   }

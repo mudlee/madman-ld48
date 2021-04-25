@@ -44,8 +44,9 @@ public class GameLayer extends Game implements Layer {
         assetsLoaded = true;
         ambient = assetManager.get(Asset.AUDIO_AMBIENT.getReference(), Music.class);
         ambient.setLooping(true);
+        ambient.setVolume(0.3f);
         ambient.play();
-        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        //Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
         setScreen(new HomeScreen(this, inputManager, assetManager));
       }
 
