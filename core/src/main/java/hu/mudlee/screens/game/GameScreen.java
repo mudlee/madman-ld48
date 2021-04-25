@@ -32,7 +32,7 @@ public class GameScreen extends AbstractScreen {
   private final GameInputProcessor gameInputProcessor;
   private final PlayerController playerController;
   private final TiledMap map;
-  private final TiledMapRenderer renderer;
+  private final TiledMapRenderer mapRenderer;
   private final Player player;
   private final OrthographicCamera camera;
   private final Array<Citizen> citizens = new Array<>();
@@ -41,7 +41,7 @@ public class GameScreen extends AbstractScreen {
     this.inputManager = inputManager;
     this.gameInputProcessor = new GameInputProcessor(gameLayer);
     camera = new OrthographicCamera();
-    camera.zoom = 0.2f;
+    camera.zoom = 0.5f;
     final var viewport = new ScreenViewport(camera);
 
     stage = new Stage(viewport);
@@ -49,7 +49,7 @@ public class GameScreen extends AbstractScreen {
     UILayer.setUILayout(new GameUI(gameLayer, assetManager));
 
     map = new TmxMapLoader().load("map.tmx");
-    renderer = new OrthogonalTiledMapRenderer(map);
+    mapRenderer = new OrthogonalTiledMapRenderer(map);
 
     final var playerSprite = assetManager.get(Asset.PLAYER_ATLAS.getReference(), Texture.class);
 
@@ -60,7 +60,7 @@ public class GameScreen extends AbstractScreen {
     int mapWidth = ((TiledMapTileLayer) mapLayers.get(0)).getWidth();
     int mapHeight = ((TiledMapTileLayer) mapLayers.get(0)).getHeight();
 
-    final var sidewalk= ((TiledMapTileLayer)map.getLayers().get("Sidewalk"));
+    final var sidewalk = ((TiledMapTileLayer) map.getLayers().get("Sidewalk"));
 
     // Warping citizens
     PathFinder pathFinder = new PathFinder(mapWidth, mapHeight, sidewalk);
@@ -78,21 +78,22 @@ public class GameScreen extends AbstractScreen {
     inputManager.addInputProcessor(gameInputProcessor);
     //ambient.play();
 
-    final var layer = map.getLayers().get("PlayerWarpPoint");
-    float x = layer.getObjects().get("Player").getProperties().get("x", Float.class);
-    float y = layer.getObjects().get("Player").getProperties().get("y", Float.class);
-    player.setPosition(x,y);
+    final var playerWarp = map.getLayers().get("PlayerWarpPoint");
+    float playerWarpX = playerWarp.getObjects().get("Player").getProperties().get("x", Float.class);
+    float playerWarpY = playerWarp.getObjects().get("Player").getProperties().get("y", Float.class);
+    player.setPosition(playerWarpX, playerWarpY);
 
-    stage.addActor(player);
     citizens.forEach(stage::addActor);
+    stage.addActor(player);
+    player.setCitizens(citizens);
   }
 
   @Override
   public void render(float delta) {
     ScreenUtils.clear(Color.WHITE);
 
-    renderer.setView((OrthographicCamera) stage.getCamera());
-    renderer.render();
+    mapRenderer.setView((OrthographicCamera) stage.getCamera());
+    mapRenderer.render();
 
     handlePlayerMovement(delta);
 
@@ -106,7 +107,7 @@ public class GameScreen extends AbstractScreen {
 
   @Override
   public void resize(int width, int height) {
-    stage.getViewport().update(width,height, true);
+    stage.getViewport().update(width, height, true);
   }
 
   @Override
@@ -126,24 +127,27 @@ public class GameScreen extends AbstractScreen {
   private void handlePlayerMovement(float delta) {
     boolean moving = false;
 
-    if(Gdx.input.isKeyPressed(Input.Keys.D)) {
+    if (Gdx.input.isKeyPressed(Input.Keys.D)) {
       playerController.moveRight(delta);
       moving = true;
-    }
-    else if(Gdx.input.isKeyPressed(Input.Keys.A)) {
+    } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
       playerController.moveLeft(delta);
       moving = true;
-    }
-    else if(Gdx.input.isKeyPressed(Input.Keys.W)) {
+    } else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
       playerController.moveUp(delta);
       moving = true;
-    }
-    else if(Gdx.input.isKeyPressed(Input.Keys.S)) {
+    } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
       playerController.moveDown(delta);
       moving = true;
     }
 
-    if(!moving) {
+    if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+      playerController.startHypnotize();
+    } else {
+      playerController.stopHypnotize();
+    }
+
+    if (!moving) {
       playerController.stop();
     }
   }

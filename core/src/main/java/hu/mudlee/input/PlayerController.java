@@ -23,6 +23,14 @@ public class PlayerController {
     TMP_RECT.height = Constants.WORLD_UNIT;
   }
 
+  public void startHypnotize() {
+    player.startHypnotize();
+  }
+
+  public void stopHypnotize() {
+    player.stopHypnotize();
+  }
+
   public void stop() {
     player.stop();
   }

@@ -11,6 +11,7 @@ public class CitizenAnimations {
   public final Animation<TextureRegion> idleAnim;
   public final Animation<TextureRegion> walkHorizontalAnim;
   public final Animation<TextureRegion> walkVerticalAnim;
+  public final Animation<TextureRegion> hypnotizedAnim;
   public final TextureRegion idleFrame;
 
   public CitizenAnimations(Texture spritesheet) {
@@ -24,6 +25,7 @@ public class CitizenAnimations {
     idleAnim = createIdleAnim(regions);
     walkHorizontalAnim = createWalkHorizontalAnim(regions);
     walkVerticalAnim = createWalkVerticalAnim(regions);
+    hypnotizedAnim = createHypnotizedAnim(regions);
   }
 
   private Animation<TextureRegion> createWalkHorizontalAnim(TextureRegion[][] textureRegions) {
@@ -54,5 +56,15 @@ public class CitizenAnimations {
     frames[3] = textureRegions[2][3];
 
     return new Animation<>(CITIZEN_WALK_ANIM_SPEED, frames);
+  }
+
+  private Animation<TextureRegion> createHypnotizedAnim(TextureRegion[][] textureRegions) {
+    TextureRegion[] frames = new TextureRegion[4];
+    frames[0] = textureRegions[3][0];
+    frames[1] = textureRegions[3][1];
+    frames[2] = textureRegions[3][2];
+    frames[3] = textureRegions[3][3];
+
+    return new Animation<>(CITIZEN_HYPNOTIZED_ANIM_SPEED, frames);
   }
 }

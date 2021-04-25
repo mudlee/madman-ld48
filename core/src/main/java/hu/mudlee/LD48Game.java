@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import hu.mudlee.input.InputManager;
 import hu.mudlee.layers.*;
+import hu.mudlee.ui.Styles;
 
 public class LD48Game implements ApplicationListener {
   private final LayerStack layerStack;
@@ -39,6 +40,7 @@ public class LD48Game implements ApplicationListener {
   @Override
   public void dispose() {
     layerStack.dispose();
+    Styles.dispose();
   }
 
   @Override

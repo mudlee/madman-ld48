@@ -4,23 +4,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import hu.mudlee.layers.GameLayer;
 import hu.mudlee.ui.Font;
 import hu.mudlee.ui.FontSize;
-import hu.mudlee.ui.UIComponentCreator;
+import hu.mudlee.ui.Styles;
 import hu.mudlee.util.GfxUtil;
 
 public class Menu extends Table {
   public Menu(GameLayer gameLayer) {
-    final var uiComponentCreator = new UIComponentCreator();
-
     setFillParent(true);
     setBackground(GfxUtil.createBg(1,1, new Color(0,0,0,0.7f)));
 
     final var middle = new Table();
 
-    final var quitBtn = uiComponentCreator.textButton("Quit Game", Font.DEFAULT, FontSize.BTN);
+    final var quitBtn = new TextButton("Quit Game", Styles.menuButton(Font.DEFAULT, FontSize.BTN));
     quitBtn.addListener(new ClickListener(){
       @Override
       public void clicked(InputEvent event, float x, float y) {
@@ -30,7 +29,7 @@ public class Menu extends Table {
     });
     quitBtn.pad(15);
 
-    final var restartBtn = uiComponentCreator.textButton("Restart Game",Font.DEFAULT, FontSize.BTN);
+    final var restartBtn = new TextButton("Restart Game", Styles.menuButton(Font.DEFAULT, FontSize.BTN));
     restartBtn.addListener(new ClickListener(){
       @Override
       public void clicked(InputEvent event, float x, float y) {
