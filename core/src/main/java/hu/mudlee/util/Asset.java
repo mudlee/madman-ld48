@@ -10,6 +10,7 @@ public enum Asset {
   TEXTURE_ATLAS("spritesheet.png", Texture.class),
   PLAYER_ATLAS("player.png", Texture.class),
   CITIZEN_ATLAS("citizen.png", Texture.class),
+  POLICE_CAR_ATLAS("police_car.png", Texture.class),
   BIG_WIN_END_ATLAS("big_winend_images.png", Texture.class),
   BIG_HOME_ATLAS("big_home.png", Texture.class),
   ;

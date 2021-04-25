@@ -17,17 +17,21 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import hu.mudlee.GameState;
 import hu.mudlee.actors.Citizen;
+import hu.mudlee.actors.PoliceCar;
 import hu.mudlee.logic.CitizenCreator;
 import hu.mudlee.actors.Player;
 import hu.mudlee.input.*;
 import hu.mudlee.layers.GameLayer;
 import hu.mudlee.layers.UILayer;
+import hu.mudlee.logic.PoliceCarCreator;
 import hu.mudlee.logic.WanderPointsExtractor;
 import hu.mudlee.messaging.Event;
 import hu.mudlee.messaging.MessageBus;
 import hu.mudlee.pathfinding.*;
 import hu.mudlee.screens.AbstractScreen;
 import hu.mudlee.util.Asset;
+
+import static hu.mudlee.Constants.*;
 
 public class GameScreen extends AbstractScreen {
   private final Stage stage;
@@ -40,6 +44,7 @@ public class GameScreen extends AbstractScreen {
   private final Player player;
   private final OrthographicCamera camera;
   private final Array<Citizen> citizens = new Array<>();
+  private final Array<PoliceCar> policeCars = new Array<>();
   private final Color clearColor = new Color(0x1a2239ff);
 
   public GameScreen(GameLayer gameLayer, InputManager inputManager, AssetManager assetManager) {
@@ -67,20 +72,34 @@ public class GameScreen extends AbstractScreen {
     int mapHeight = ((TiledMapTileLayer) mapLayers.get(0)).getHeight();
 
     final var sidewalk = ((TiledMapTileLayer) map.getLayers().get("Sidewalk"));
+    final var road = ((TiledMapTileLayer) map.getLayers().get("Road"));
 
     // Warping citizens
-    PathFinder pathFinder = new PathFinder(mapWidth, mapHeight, sidewalk);
+    final var citizenPathFinder = new PathFinder(mapWidth, mapHeight, sidewalk);
+    final var citizenWanderPoints = WanderPointsExtractor.extract(mapLayers, CITIZEN_WANDER_POINTS);
+    final var citizenCreator = new CitizenCreator(assetManager, citizenWanderPoints, citizenPathFinder);
+    citizens.addAll(citizenCreator.create(mapLayers));
 
-    final var wanderPoints = WanderPointsExtractor.extract(mapLayers);
-    final var citizCreator = new CitizenCreator(assetManager, wanderPoints, pathFinder);
-    citizens.addAll(citizCreator.create(mapLayers));
+    // Warping police
+    final var policePathFinder = new PathFinder(mapWidth, mapHeight, road);
+    final var policeWanderPoints = WanderPointsExtractor.extract(mapLayers, POLICE_CAR_WANDER_POINTS);
+    final var policeCarCreator = new PoliceCarCreator(assetManager, policeWanderPoints, policePathFinder);
+    policeCars.addAll(policeCarCreator.create(mapLayers));
 
     MessageBus.register(Event.GAME_PAUSED, () -> {
       playerController.stop();
       citizens.forEach(Citizen::pause);
+      policeCars.forEach(PoliceCar::pause);
     });
-    MessageBus.register(Event.GAME_RESUMED, () -> citizens.forEach(Citizen::resume));
-    MessageBus.register(Event.ZERO_DECIBEL_REACHED, () -> gameLayer.winGame());
+    MessageBus.register(Event.GAME_RESUMED, () -> {
+      citizens.forEach(Citizen::resume);
+      policeCars.forEach(PoliceCar::resume);
+    });
+    MessageBus.register(Event.PLAYER_CATCHED, () -> {
+      playerController.stopForever();
+      citizens.forEach(Citizen::pause);
+    });
+    MessageBus.register(Event.ZERO_DECIBEL_REACHED, gameLayer::winGame);
   }
 
   @Override
@@ -91,14 +110,16 @@ public class GameScreen extends AbstractScreen {
     inputManager.addInputProcessor(gameInputProcessor);
     //ambient.play();
 
-    final var playerWarp = map.getLayers().get("PlayerWarpPoint");
+    final var playerWarp = map.getLayers().get(PLAYER_WARP_POINT);
     float playerWarpX = playerWarp.getObjects().get("Player").getProperties().get("x", Float.class);
     float playerWarpY = playerWarp.getObjects().get("Player").getProperties().get("y", Float.class);
     player.setPosition(playerWarpX, playerWarpY);
 
     citizens.forEach(stage::addActor);
+    policeCars.forEach(stage::addActor);
     stage.addActor(player);
     player.setCitizens(citizens);
+    player.setPoliceCars(policeCars);
   }
 
   @Override

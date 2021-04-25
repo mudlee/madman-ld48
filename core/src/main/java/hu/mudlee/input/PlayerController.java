@@ -11,6 +11,7 @@ public class PlayerController {
   private final Player player;
   private final Array<RectangleMapObject> colliders;
   private final Rectangle TMP_RECT = new Rectangle();
+  private boolean halted;
 
   public PlayerController(Player player, TiledMap map) {
     this.player = player;
@@ -35,7 +36,15 @@ public class PlayerController {
     player.stop();
   }
 
+  public void stopForever() {
+    stop();
+    halted = true;
+  }
+
   public void moveRight(float delta) {
+    if(halted) {
+      return;
+    }
     final var newX = Math.round(player.getX() + Constants.PLAYER_WALK_SPEED * delta);
     if(wouldCollide(newX, player.getY())) {
       return;
@@ -44,6 +53,9 @@ public class PlayerController {
   }
 
   public void moveLeft(float delta) {
+    if(halted) {
+      return;
+    }
     final var newX = Math.round(player.getX() - Constants.PLAYER_WALK_SPEED * delta);
     if(wouldCollide(newX, player.getY())) {
       return;
@@ -52,6 +64,9 @@ public class PlayerController {
   }
 
   public void moveUp(float delta) {
+    if(halted) {
+      return;
+    }
     final var newY = Math.round(player.getY() + Constants.PLAYER_WALK_SPEED * delta);
     if(wouldCollide(player.getX(), newY)) {
       return;
@@ -60,6 +75,9 @@ public class PlayerController {
   }
 
   public void moveDown(float delta) {
+    if(halted) {
+      return;
+    }
     final var newY = Math.round(player.getY() - Constants.PLAYER_WALK_SPEED * delta);
     if(wouldCollide(player.getX(), newY)) {
       return;

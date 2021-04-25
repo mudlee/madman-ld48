@@ -25,10 +25,12 @@ public class Player extends Group {
   private final Label msg;
   private final Rectangle TMP_PLAYER_RECT = new Rectangle();
   private final Rectangle TMP_VICTIM_RECT = new Rectangle();
+  private final Rectangle TMP_POLICE_RECT = new Rectangle();
   private boolean showMsg;
   private float animStateTime;
   private MoveDirection moveDirection = MoveDirection.IDLE;
   private Array<Citizen> citizens;
+  private Array<PoliceCar> policeCars;
   private boolean hypnotizing;
   private Citizen victim;
 
@@ -45,6 +47,8 @@ public class Player extends Group {
     TMP_PLAYER_RECT.height = WORLD_UNIT * HYPNOTIZATION_RANGE_UNIT;
     TMP_VICTIM_RECT.width = WORLD_UNIT * HYPNOTIZATION_RANGE_UNIT;
     TMP_VICTIM_RECT.height = WORLD_UNIT * HYPNOTIZATION_RANGE_UNIT;
+    TMP_POLICE_RECT.width = WORLD_UNIT * POLICE_CATCH_RANGE_UNIT;
+    TMP_POLICE_RECT.height = WORLD_UNIT * POLICE_CATCH_RANGE_UNIT;
   }
 
   @Override
@@ -53,6 +57,10 @@ public class Player extends Group {
     animStateTime += delta;
     sprite.setRegion(getActiveFrame());
     msg.setPosition(getX(), getY() + 15);
+
+    if(hypnotizing) {
+      actIfAnyPoliceNearby();
+    }
   }
 
   @Override
@@ -67,6 +75,10 @@ public class Player extends Group {
 
   public void setCitizens(Array<Citizen> citizens) {
     this.citizens = citizens;
+  }
+
+  public void setPoliceCars(Array<PoliceCar> policeCars) {
+    this.policeCars = policeCars;
   }
 
   public void walkRight(int newX) {
@@ -165,6 +177,34 @@ public class Player extends Group {
 
   public Sprite getSprite() {
     return sprite;
+  }
+
+  private void actIfAnyPoliceNearby() {
+    TMP_PLAYER_RECT.setPosition(getX(), getY());
+    boolean catched = false;
+    for (PoliceCar policeCar : policeCars) {
+      if(policeCar.didCatch()) {
+        continue;
+      }
+
+      TMP_POLICE_RECT.setPosition(policeCar.getX(), policeCar.getY());
+      if(TMP_PLAYER_RECT.overlaps(TMP_POLICE_RECT)) {
+        Log.debug("Police catches %s".formatted(policeCar.getName()));
+        policeCar.catched();
+        catched = true;
+        break;
+      }
+    }
+
+    if(catched) {
+      for (PoliceCar policeCar : policeCars) {
+        if(policeCar.didCatch()) {
+          continue;
+        }
+
+        policeCar.goToFelonyPlace(policeCar.getX(), policeCar.getY());
+      }
+    }
   }
 
   private boolean findNearVictim() {

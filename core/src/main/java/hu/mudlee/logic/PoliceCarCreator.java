@@ -1,22 +1,21 @@
 package hu.mudlee.logic;
 
-
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import hu.mudlee.Constants;
-import hu.mudlee.actors.Citizen;
+import hu.mudlee.actors.PoliceCar;
 import hu.mudlee.pathfinding.PathFinder;
 import hu.mudlee.util.Asset;
 
-public class CitizenCreator {
+public class PoliceCarCreator {
   private final AssetManager assetManager;
   private final Array<Vector2> wanderPoints;
   private final PathFinder pathfinder;
 
-  public CitizenCreator(
+  public PoliceCarCreator(
     AssetManager assetManager,
     Array<Vector2> wanderPoints,
     PathFinder pathfinder
@@ -26,22 +25,22 @@ public class CitizenCreator {
     this.pathfinder = pathfinder;
   }
 
-  public Array<Citizen> create(MapLayers mapLayers) {
-    final var sprite = assetManager.get(Asset.CITIZEN_ATLAS.getReference(), Texture.class);
-    final var citizenWarpPoints = mapLayers.get(Constants.CITIZEN_WARP_POINTS).getObjects();
+  public Array<PoliceCar> create(MapLayers mapLayers) {
+    final var sprite = assetManager.get(Asset.POLICE_CAR_ATLAS.getReference(), Texture.class);
+    final var warpPoints = mapLayers.get(Constants.POLICE_CAR_WARP_POINTS).getObjects();
 
-    final var citizens = new Array<Citizen>();
+    final var policeCars = new Array<PoliceCar>();
 
-    for (var i = 0; i < citizenWarpPoints.getCount(); i++) {
-      final var warpPoint = citizenWarpPoints.get(i);
-      final var citizen = new Citizen(i, sprite, wanderPoints, pathfinder);
-      citizen.setPosition(
+    for (var i = 0; i < warpPoints.getCount(); i++) {
+      final var warpPoint = warpPoints.get(i);
+      final var policeCar = new PoliceCar(sprite, wanderPoints, pathfinder);
+      policeCar.setPosition(
         warpPoint.getProperties().get("x", Float.class),
         warpPoint.getProperties().get("y", Float.class)
       );
-      citizens.add(citizen);
+      policeCars.add(policeCar);
     }
 
-    return citizens;
+    return policeCars;
   }
 }
