@@ -5,7 +5,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import hu.mudlee.actors.ui.Menu;
-import hu.mudlee.actors.ui.ResourcePanel;
 import hu.mudlee.layers.GameLayer;
 import hu.mudlee.messaging.Event;
 import hu.mudlee.messaging.MessageBus;
@@ -36,7 +35,7 @@ public class GameUI extends AbstractUILayout {
 
   private void showMenu() {
     // TODO
-    Gdx.app.exit();
+    //Gdx.app.exit();
     menu.setVisible(true);
   }
 

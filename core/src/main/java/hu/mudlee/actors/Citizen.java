@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import hu.mudlee.actors.animators.CitizenAnimations;
 import hu.mudlee.pathfinding.ManhattanDistanceHeuristic;
 import hu.mudlee.pathfinding.PathFinder;
-import hu.mudlee.pathfinding.TestNode;
+import hu.mudlee.pathfinding.Node;
 import hu.mudlee.ui.Font;
 import hu.mudlee.ui.Styles;
 import hu.mudlee.util.Log;
@@ -31,7 +31,7 @@ public class Citizen extends Group {
   private final Sprite sprite;
   private final Array<Vector2> wanderPoints;
   private final PathFinder pathfinder;
-  private final DefaultGraphPath<TestNode> path;
+  private final DefaultGraphPath<Node> path;
   private final String name;
   private final ManhattanDistanceHeuristic heuristic = new ManhattanDistanceHeuristic();
   private final CitizenAnimations animations;
@@ -45,6 +45,7 @@ public class Citizen extends Group {
   private MoveDirection moveDirection = MoveDirection.IDLE;
   private boolean hypnotized;
   private boolean beingHypnotized;
+  private boolean paused;
 
   public Citizen(int index, Texture spritesheet, Array<Vector2> wanderPoints, PathFinder pathfinder) {
     this.name = "Citizen-%d".formatted(index);
@@ -60,6 +61,15 @@ public class Citizen extends Group {
     addActor(msg);
 
     initiateNextMsg();
+  }
+
+  public void pause() {
+    stopMoving();
+    paused = true;
+  }
+
+  public void resume() {
+    paused = false;
   }
 
   public void beginHypnotization() {
@@ -96,6 +106,10 @@ public class Citizen extends Group {
   @Override
   public void act(float delta) {
     super.act(delta);
+
+    if(paused) {
+      return;
+    }
 
     animStateTime += delta;
     sprite.setRegion(getActiveFrame());

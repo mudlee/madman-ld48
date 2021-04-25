@@ -3,8 +3,8 @@ package hu.mudlee.pathfinding;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
 public class GraphBuilder {
-  public final TestGraph graph = new TestGraph(20);
-  public final TestNode[][] nodes;
+  public final Graph graph = new Graph(20);
+  public final Node[][] nodes;
   private final int mapWidth;
   private final int mapHeight;
   private final TiledMapTileLayer walkableLayer;
@@ -13,7 +13,7 @@ public class GraphBuilder {
     this.mapWidth = mapWidth;
     this.mapHeight = mapHeight;
     this.walkableLayer = walkableLayer;
-    nodes = new TestNode[mapWidth][mapHeight];
+    nodes = new Node[mapWidth][mapHeight];
   }
 
   public void build() {
@@ -21,7 +21,7 @@ public class GraphBuilder {
     for (int x = 0; x < mapWidth; x++) {
       for (int y = 0; y < mapHeight; y++) {
         if (walkableLayer.getCell(x,y) != null) {
-          nodes[x][y] = new TestNode(x, y, index++);
+          nodes[x][y] = new Node(x, y, index++);
           graph.addNode(nodes[x][y]);
         }
       }
@@ -39,7 +39,7 @@ public class GraphBuilder {
     }
   }
 
-  private void addNodeNeighbour(TestNode aNode, int aX, int aY, TestNode[][] allNodes) {
+  private void addNodeNeighbour(Node aNode, int aX, int aY, Node[][] allNodes) {
     // Make sure that we are within our array bounds.
     if (aX >= 0 && aX < allNodes.length && aY >=0 && aY < allNodes[0].length) {
       aNode.addNeighbour(allNodes[aX][aY]);

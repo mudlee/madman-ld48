@@ -6,8 +6,8 @@ import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
 public class PathFinder {
-  private final IndexedAStarPathFinder<TestNode> pathFinder;
-  private final TestNode[][] nodes;
+  private final IndexedAStarPathFinder<Node> pathFinder;
+  private final Node[][] nodes;
 
   public PathFinder(int mapWidth, int mapHeight, TiledMapTileLayer walkableLayer) {
     final var builder = new GraphBuilder(mapWidth, mapHeight, walkableLayer);
@@ -17,11 +17,11 @@ public class PathFinder {
     nodes = builder.nodes;
   }
 
-  public void searchNodePath(TestNode startNode, TestNode endNode, Heuristic<TestNode> heuristic, GraphPath<TestNode> path) {
+  public void searchNodePath(Node startNode, Node endNode, Heuristic<Node> heuristic, GraphPath<Node> path) {
     pathFinder.searchNodePath(startNode, endNode, heuristic, path);
   }
 
-  public TestNode[][] getNodes() {
+  public Node[][] getNodes() {
     return nodes;
   }
 }

@@ -20,7 +20,7 @@ import com.badlogic.gdx.ai.pfa.DefaultConnection;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedNode;
 import com.badlogic.gdx.utils.Array;
 
-public class TestNode implements IndexedNode<TestNode> {
+public class Node implements IndexedNode<Node> {
   /** Index that needs to be unique for every node and starts from 0. */
   private final int mIndex;
 
@@ -30,10 +30,10 @@ public class TestNode implements IndexedNode<TestNode> {
   public final int mY;
 
   /** The neighbours of this node. i.e to which node can we travel to from here. */
-  Array<Connection<TestNode>> mConnections = new Array<Connection<TestNode>>();
+  Array<Connection<Node>> mConnections = new Array<Connection<Node>>();
 
   /** @param aIndex needs to be unique for every node and starts from 0. */
-  public TestNode(int aX, int aY, int aIndex) {
+  public Node(int aX, int aY, int aIndex) {
     mIndex = aIndex;
     mX = aX;
     mY = aY;
@@ -45,13 +45,13 @@ public class TestNode implements IndexedNode<TestNode> {
   }
 
   @Override
-  public Array<Connection<TestNode>> getConnections() {
+  public Array<Connection<Node>> getConnections() {
     return mConnections;
   }
 
-  public void addNeighbour(TestNode aNode) {
+  public void addNeighbour(Node aNode) {
     if (null != aNode) {
-      mConnections.add(new DefaultConnection<TestNode>(this, aNode));
+      mConnections.add(new DefaultConnection<Node>(this, aNode));
     }
   }
 

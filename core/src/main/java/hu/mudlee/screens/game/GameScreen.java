@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import hu.mudlee.GameState;
 import hu.mudlee.actors.Citizen;
 import hu.mudlee.logic.CitizenCreator;
 import hu.mudlee.actors.Player;
@@ -22,12 +23,15 @@ import hu.mudlee.input.*;
 import hu.mudlee.layers.GameLayer;
 import hu.mudlee.layers.UILayer;
 import hu.mudlee.logic.WanderPointsExtractor;
+import hu.mudlee.messaging.Event;
+import hu.mudlee.messaging.MessageBus;
 import hu.mudlee.pathfinding.*;
 import hu.mudlee.screens.AbstractScreen;
 import hu.mudlee.util.Asset;
 
 public class GameScreen extends AbstractScreen {
   private final Stage stage;
+  private final GameLayer gameLayer;
   private final InputManager inputManager;
   private final GameInputProcessor gameInputProcessor;
   private final PlayerController playerController;
@@ -38,6 +42,7 @@ public class GameScreen extends AbstractScreen {
   private final Array<Citizen> citizens = new Array<>();
 
   public GameScreen(GameLayer gameLayer, InputManager inputManager, AssetManager assetManager) {
+    this.gameLayer = gameLayer;
     this.inputManager = inputManager;
     this.gameInputProcessor = new GameInputProcessor(gameLayer);
     camera = new OrthographicCamera();
@@ -68,6 +73,12 @@ public class GameScreen extends AbstractScreen {
     final var wanderPoints = WanderPointsExtractor.extract(mapLayers);
     final var citizCreator = new CitizenCreator(assetManager, wanderPoints, pathFinder);
     citizens.addAll(citizCreator.create(mapLayers));
+
+    MessageBus.register(Event.GAME_PAUSED, () -> {
+      playerController.stop();
+      citizens.forEach(Citizen::pause);
+    });
+    MessageBus.register(Event.GAME_RESUMED, () -> citizens.forEach(Citizen::resume));
   }
 
   @Override
@@ -125,6 +136,10 @@ public class GameScreen extends AbstractScreen {
   }
 
   private void handlePlayerMovement(float delta) {
+    if(gameLayer.getState() == GameState.PAUSED) {
+      return;
+    }
+
     boolean moving = false;
 
     if (Gdx.input.isKeyPressed(Input.Keys.D)) {

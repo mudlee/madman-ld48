@@ -17,9 +17,9 @@ package hu.mudlee.pathfinding;
 
 import com.badlogic.gdx.ai.pfa.Heuristic;
 
-public class ManhattanDistanceHeuristic implements Heuristic<TestNode> {
+public class ManhattanDistanceHeuristic implements Heuristic<Node> {
   @Override
-  public float estimate(TestNode node, TestNode endNode) {
+  public float estimate(Node node, Node endNode) {
     return Math.abs(endNode.mX - node.mX) + Math.abs(endNode.mY - node.mY);
   }
 
